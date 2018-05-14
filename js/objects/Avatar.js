@@ -4,7 +4,7 @@ function Avatar(gl) {
 
   this.texProgram = new TexturedQuadProgram(gl, this.vsTex, this.fsTex);
 
-  this.avatarTexture = new Texture2D(gl, "/textures/marbletexture.png");
+  this.avatarTexture = new Texture2D(gl, "/textures/base.marble.png");
 
   this.material = new Material(gl, this.texProgram);
   this.material.colorTexture.set(this.avatarTexture);
@@ -17,19 +17,36 @@ function Avatar(gl) {
 
   this.gameObject.move = function(t, dt) {
     this.velocity.addScaled(dt, this.accel);
-    this.velocity.mul(0.9);
+    if(this.position.y <= 3.5) this.velocity.mul(0.975, 1, 0.975);
     this.position.addScaled(dt, this.velocity);
+    this.pitch += this.velocity.z * 0.0035;
+    this.roll -= this.velocity.x * 0.0035;
   };
 
   this.gameObject.control = function(t, dt, keysPressed, gameObjects) {
-    this.accel.set(0, 0, 0);
+    if(this.position.y <= 3.5 && this.velocity.y <= 10) {
+      this.position.y = 3.5;
+      this.velocity.y = -this.velocity.y * 0.5;
+
+      if(this.velocity.y < 10 && this.velocity.y > -10) {
+        this.velocity.y = 0;
+      }
+
+      this.accel.set(0, 0, 0);
+    } else {
+      this.accel.set(0, -0.5, 0);
+    }
+    
     if(keysPressed.W) this.accel.add(0, 0, 1);
     if(keysPressed.S) this.accel.sub(0, 0, 1);    
-    if(keysPressed.D) this.accel.add(1, 0, 0);
-    if(keysPressed.A) this.accel.sub(1, 0, 0);
-    if(keysPressed.SPACE) this.jump();
-    this.accel.normalize().mul(230);
-    if(keysPressed.P) console.log(this.velocity, 1/this.backDrag);
+    if(keysPressed.D) this.accel.add(0.8, 0, 0);
+    if(keysPressed.A) this.accel.sub(0.8, 0, 0);
+    if(keysPressed.SPACE && this.position.y <= 4) {
+      this.velocity.y = 120;
+    };
+
+    this.accel.mul(190);
+    if(keysPressed.P) console.log(this.velocity.storage, this.position.storage);
   };
   
 }
@@ -37,25 +54,3 @@ function Avatar(gl) {
 Avatar.prototype.draw = function(camera) {
   this.gameObject.draw(camera);
 };
-
-// Avatar.prototype.move = function(dt, framecount, keysPressed, camera) {
-//   if (keysPressed.W) {
-//     this.gameObject.position.addScaled(12 * dt, this.gameObject.ahead);
-//   }
-
-//   if (keysPressed.S) {
-//     this.gameObject.position.addScaled(-12 * dt, this.gameObject.ahead);
-//   }
-
-//   if (keysPressed.D) {
-//     this.gameObject.yaw -= 1 * dt;
-//   }
-
-//   if (keysPressed.A) {
-//     this.gameObject.yaw += 1 * dt;
-//   }
-
-//   if (!keysPressed.T) {
-//     camera.position.set(this.gameObject.position.plus(0, 20, 125));
-//   }
-// };

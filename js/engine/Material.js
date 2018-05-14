@@ -54,3 +54,11 @@ Object.defineProperty(Material, "modelMatrix", {
 Object.defineProperty(Material, "modelMatrixInverse", {
   value: new Mat4(),
 });
+
+Object.defineProperty(Material, "rayDirMatrix", {
+  value: new Mat4()
+});
+
+Object.defineProperty(Material, "eyePos", {
+  value: new Vec3()
+});

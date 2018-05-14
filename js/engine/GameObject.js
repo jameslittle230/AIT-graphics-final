@@ -17,6 +17,7 @@ const GameObject = function(mesh) {
   this.accel = new Vec3();
   this.velocity = new Vec3().set(0, 0, 0);
   this.backDrag = 5;
+  this.jumpBuffer = 0;
 };
 
 Object.defineProperty(GameObject.prototype, "ahead", {
@@ -33,8 +34,8 @@ Object.defineProperty(GameObject.prototype, "ahead", {
 Object.defineProperty(GameObject.prototype, "right", {
   get: function() {
     var rotationMatrix = new Mat4()
-      .rotate(this.roll, 0, 0, 1)
       .rotate(this.pitch, 1, 0, 0)
+      .rotate(this.roll, 0, 0, 1)
       .rotate(this.yaw, 0, 1, 0);
 
     return new Vec3(1, 0, 0).xyz1times(rotationMatrix);

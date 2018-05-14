@@ -1,0 +1,15 @@
+Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `
+    precision highp float;
+
+    varying vec3 rayDir;
+
+    uniform vec3 eyePos;
+    uniform samplerCube envmapTexture;
+
+    void main(void) {
+        vec4 e = vec4(eyePos, 1);
+        vec4 d = vec4(normalize(rayDir), 0);
+                
+        gl_FragColor = textureCube(envmapTexture, d.xyz);
+    }
+`;
