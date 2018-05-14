@@ -1,8 +1,8 @@
 "use strict";
 const PerspectiveCamera = function () {
-    this.position = new Vec3(0.0, 20.0, 85.0);
+    this.position = new Vec3(0.0, 10.0, -10.0);
     this.originalPosition = new Vec3();
-    this.ahead = new Vec3(0.0, 0.0, -1.0);
+    this.ahead = new Vec3(0.0, 0.0, 1.0);
     this.right = new Vec3(1.0, 0.0, 0.0);
     this.up = new Vec3(0.0, 1.0, 0.0);
 
@@ -53,63 +53,40 @@ PerspectiveCamera.prototype.updateProjMatrix = function () {
 };
 
 PerspectiveCamera.prototype.move = function (dt, keysPressed) {
-    if(keysPressed.T) {
-        if(this.trackingFirstFrame) {
-            console.log("First frame of tracking shot");
-            this.trackingFirstFrame = false;
-            this.originalPosition.set(this.position);
-            this.position.set(this.originalPosition.plus(-25, 5, 0));
-        }
+    // if (this.isDragging) {
+    //     this.yaw -= this.mouseDelta.x * 0.002;
+    //     this.pitch -= this.mouseDelta.y * 0.002;
 
-        console.log("Another frame of tracking shot");
-        this.position.add(dt*5, dt*-1, 0);
+    //     if (this.pitch > 3.14 / 2.0) {
+    //         this.pitch = 3.14 / 2.0;
+    //     }
+    //     if (this.pitch < -3.14 / 2.0) {
+    //         this.pitch = -3.14 / 2.0;
+    //     }
 
-        if(this.position.y < 0.1) {
-            this.position.set(this.originalPosition.plus(-25, 5, 0));
-        }
-    }
+    //     this.mouseDelta = new Vec2(0.0, 0.0);
 
-    if(!keysPressed.T) {
-        if(!this.trackingFirstFrame) {
-            console.log("Last frame of tracking shot");
-            this.trackingFirstFrame = true;
-            this.position.set(this.originalPosition);
-        }
-    }
-    if (this.isDragging) {
-        this.yaw -= this.mouseDelta.x * 0.002;
-        this.pitch -= this.mouseDelta.y * 0.002;
-
-        if (this.pitch > 3.14 / 2.0) {
-            this.pitch = 3.14 / 2.0;
-        }
-        if (this.pitch < -3.14 / 2.0) {
-            this.pitch = -3.14 / 2.0;
-        }
-
-        this.mouseDelta = new Vec2(0.0, 0.0);
-
-        this.ahead = new Vec3(
-            -Math.sin(this.yaw) * Math.cos(this.pitch),
-            Math.sin(this.pitch),
-            -Math.cos(this.yaw) * Math.cos(this.pitch));
+    //     this.ahead = new Vec3(
+    //         -Math.sin(this.yaw) * Math.cos(this.pitch),
+    //         Math.sin(this.pitch),
+    //         -Math.cos(this.yaw) * Math.cos(this.pitch));
         
-        this.right.setVectorProduct(this.ahead, PerspectiveCamera.worldUp);
-        this.right.normalize();
-        this.up.setVectorProduct(this.right, this.ahead);
-    }
+    //     this.right.setVectorProduct(this.ahead, PerspectiveCamera.worldUp);
+    //     this.right.normalize();
+    //     this.up.setVectorProduct(this.right, this.ahead);
+    // }
 
     this.updateViewMatrix();
 };
 
 PerspectiveCamera.prototype.mouseDown = function () {
-    this.isDragging = true;
-    this.mouseDelta.set();
+    // this.isDragging = true;
+    // this.mouseDelta.set();
 };
 
 PerspectiveCamera.prototype.mouseMove = function (event) {
-    this.mouseDelta.x += event.movementX;
-    this.mouseDelta.y += event.movementY;
+    // this.mouseDelta.x += event.movementX;
+    // this.mouseDelta.y += event.movementY;
 
     // console.log(event.clientX);
     // if(event.movementX < 5 || event.movementX > (window.innerWidth - 5) || event.movementY < 5 || event.movementY > (window.innerHeight - 5)) {
@@ -119,7 +96,7 @@ PerspectiveCamera.prototype.mouseMove = function (event) {
 };
 
 PerspectiveCamera.prototype.mouseUp = function () {
-    this.isDragging = false;
+    // this.isDragging = false;
 };
 
 PerspectiveCamera.prototype.setAspectRatio = function (ar) {

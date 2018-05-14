@@ -10,9 +10,6 @@ const Scene = function(gl) {
   this.gameObjects = [
     this.avatar,
     new GroundPlane(gl),
-    new Balloon(gl, 0, 0),
-    new Balloon(gl, 25, 25),
-    new Balloon(gl, 30, -15),
   ];
 
   this.camera = new PerspectiveCamera();
@@ -30,8 +27,10 @@ Scene.prototype.update = function(gl, keysPressed) {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   this.camera.move(dt, keysPressed);
+  this.avatar.gameObject.control(timeAtThisFrame, dt, keysPressed, this.gameObjects);
+  this.camera.position.set(this.avatar.gameObject.position.minus(0, -10, 50));
   this.gameObjects.forEach(gameObject => {
-    gameObject.move(dt, this.frameCount, keysPressed, this.camera);
+    gameObject.gameObject.move(timeAtThisFrame, dt);
     gameObject.draw(this.camera);
   });
 };
