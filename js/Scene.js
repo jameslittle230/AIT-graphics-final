@@ -27,7 +27,7 @@ const Scene = function(gl) {
 
   this.gameObjects = [
     this.avatar,
-    // new Platform(gl),
+    new Platform(gl, -10, -5, 10),
   ];
 
   this.camera = new PerspectiveCamera();

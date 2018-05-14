@@ -17,7 +17,7 @@ function Avatar(gl) {
 
   this.gameObject.move = function(t, dt) {
     this.velocity.addScaled(dt, this.accel);
-    if(this.position.y <= 3.5) this.velocity.mul(0.975, 1, 0.975);
+    if(this.position.y <= 3.5) this.velocity.mul(0.96, 1, 0.96);
     this.position.addScaled(dt, this.velocity);
     this.pitch += this.velocity.z * 0.0035;
     this.roll -= this.velocity.x * 0.0035;
@@ -34,7 +34,7 @@ function Avatar(gl) {
 
       this.accel.set(0, 0, 0);
     } else {
-      this.accel.set(0, -0.5, 0);
+      this.accel.set(0, -0.8, 0);
     }
     
     if(keysPressed.W) this.accel.add(0, 0, 1);
@@ -42,7 +42,7 @@ function Avatar(gl) {
     if(keysPressed.D) this.accel.add(0.8, 0, 0);
     if(keysPressed.A) this.accel.sub(0.8, 0, 0);
     if(keysPressed.SPACE && this.position.y <= 4) {
-      this.velocity.y = 120;
+      this.velocity.y = 80;
     };
 
     this.accel.mul(190);
