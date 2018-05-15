@@ -6,8 +6,8 @@ const PerspectiveCamera = function () {
     this.right = new Vec3(1.0, 0.0, 0.0);
     this.up = new Vec3(0.0, 1.0, 0.0);
 
-    this.yaw = 0.0;
-    this.pitch = 0.0;
+    this.yaw = 0;
+    this.pitch = -0;
     this.fov = 1.5;
     this.aspect = 1.0;
     this.nearPlane = 0.1;
@@ -66,81 +66,32 @@ PerspectiveCamera.prototype.updateViewMatrix = function() {
 };
 
 PerspectiveCamera.prototype.updateProjMatrix = function() {
-  var yScale = 1.0 / Math.tan(this.fov * 0.5);
-  var xScale = yScale / this.aspect;
-  var f = this.farPlane;
-  var n = this.nearPlane;
-  this.projMatrix.set(
-    xScale,
-    0,
-    0,
-    0,
-    0,
-    yScale,
-    0,
-    0,
-    0,
-    0,
-    (n + f) / (n - f),
-    -1,
-    0,
-    0,
-    2 * n * f / (n - f),
-    0
-  );
-  this.viewProjMatrix.set(this.viewMatrix).mul(this.projMatrix);
-};
-
-PerspectiveCamera.prototype.move = function(dt, keysPressed) {
-  if (this.isDragging) {
-    this.yaw -= this.mouseDelta.x * 0.002;
-    this.pitch -= this.mouseDelta.y * 0.002;
-
-    if (this.pitch > 3.14 / 2.0) {
-      this.pitch = 3.14 / 2.0;
-    }
-    if (this.pitch < -3.14 / 2.0) {
-      this.pitch = -3.14 / 2.0;
-    }
-
-    this.mouseDelta = new Vec2(0.0, 0.0);
-
     this.ahead = new Vec3(
-      -Math.sin(this.yaw) * Math.cos(this.pitch),
-      Math.sin(this.pitch),
-      -Math.cos(this.yaw) * Math.cos(this.pitch)
+        -Math.sin(this.yaw) * Math.cos(this.pitch),
+        Math.sin(this.pitch),
+        -Math.cos(this.yaw) * Math.cos(this.pitch)
     );
 
     this.right.setVectorProduct(this.ahead, PerspectiveCamera.worldUp);
     this.right.normalize();
     this.up.setVectorProduct(this.right, this.ahead);
-  }
 
-  if (keysPressed.W) {
-    this.position.addScaled(this.speed * dt * 5, this.ahead);
-  }
+  var yScale = 1.0 / Math.tan(this.fov * 0.5);
+  var xScale = yScale / this.aspect;
+  var f = this.farPlane;
+  var n = this.nearPlane;
+  this.projMatrix.set(
+    xScale, 0, 0, 0,
+    0, yScale, 0, 0,
+    0, 0, (n + f) / (n - f), -1,
+    0, 0, 2 * n * f / (n - f), 0
+  );
+  this.viewProjMatrix.set(this.viewMatrix).mul(this.projMatrix);
+};
 
-  if (keysPressed.S) {
-    this.position.addScaled(-this.speed * dt * 5, this.ahead);
-  }
-
-  if (keysPressed.D) {
-    this.position.addScaled(this.speed * dt * 5, this.right);
-  }
-
-  if (keysPressed.A) {
-    this.position.addScaled(-this.speed * dt * 5, this.right);
-  }
-
-  if (keysPressed.E) {
-    this.position.addScaled(this.speed * dt * 5, PerspectiveCamera.worldUp);
-  }
-
-  if (keysPressed.Q) {
-    this.position.addScaled(-this.speed * dt * 5, PerspectiveCamera.worldUp);
-  }
-
+PerspectiveCamera.prototype.move = function(dt, keysPressed) {
   this.updateViewMatrix();
+  this.updateProjMatrix();
   this.updateRayDirMatrix();
 };
 

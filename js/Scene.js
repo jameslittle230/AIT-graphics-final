@@ -27,7 +27,7 @@ const Scene = function(gl) {
 
   this.gameObjects = [
     this.avatar,
-    new Platform(gl, -10, -5, 10),
+    new Platform(gl, 0, 0, 0),
   ];
 
   this.camera = new PerspectiveCamera();
@@ -47,14 +47,23 @@ Scene.prototype.update = function(gl, keysPressed) {
   Material.eyePos.set(this.camera.position);
   Material.rayDirMatrix.set(this.camera.rayDirMatrix);
 
-  this.avatar.gameObject.control(timeAtThisFrame, dt, keysPressed, this.gameObjects);
+  this.avatar.control(timeAtThisFrame, dt, keysPressed, this.gameObjects);
+  // this.avatar.gameObject.position.add(10, 0, 10);
+
+  this.camera.pitch = 0;
+  this.camera.yaw = Math.PI;
+  this.camera.position.set(this.avatar.gameObject.position.minus(0, -30, 80));
   this.camera.move(dt, keysPressed);
-  this.camera.position.set(this.avatar.gameObject.position.minus(0, -10, 50));
+
   this.background.draw(this.camera);
+  
   this.gameObjects.forEach(gameObject => {
-    gameObject.gameObject.move(timeAtThisFrame, dt);
+    gameObject.move(timeAtThisFrame, dt);
     gameObject.draw(this.camera);
   });
+
+  if(this.frameCount == 10) console.log(this.gameObjects[1].getTransformedCoordinates().map((v) => {return v.storage.map((c) => c.toFixed(1)).join(", ")}));
+  if(this.frameCount % 10 == 0) console.log(this.avatar.gameObject.position.storage);
 };
 
 
