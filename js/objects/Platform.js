@@ -12,9 +12,9 @@ function Platform(gl, x, y, z) {
     this.multiMesh = new MultiMesh(gl, '/models/bigplatform.json', [this.material]);
 
     this.gameObject = new GameObject(this.multiMesh);
-    this.gameObject.position.set(x, y-7, z);
+    this.gameObject.position.set(x, y, z);
 
-    this.coordinates = [[0, 7, 0], [100, 7, 0], [0, 7, -100], [100, 7, -100]];
+    this.coordinates = [[0, 14, 0], [100, 14, 0], [0, 14, -100], [100, 14, -100]];
 };
 
 Platform.prototype.draw = function(camera) {
@@ -29,7 +29,7 @@ Platform.prototype.getTransformedCoordinates = function() {
     this.gameObject.updateModelMatrix();
     return this.coordinates.map((c) => {
         var vec = new Vec3(c[0], c[1], c[2]);
-        vec.xyz0mul(this.gameObject.modelMatrix);
+        vec.xyz1mul(this.gameObject.modelMatrix);
         return vec;
     });
 }

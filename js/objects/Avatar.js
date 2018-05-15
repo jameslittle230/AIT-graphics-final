@@ -12,7 +12,7 @@ function Avatar(gl) {
   this.multiMesh = new MultiMesh(gl, "/models/Sphere.json", [this.material]);
 
   this.gameObject = new GameObject(this.multiMesh);
-  this.gameObject.position.set(0, 3.5, 0);
+  this.gameObject.position.set(0, 30, 0);
   this.gameObject.scale.set(7, 7, 7);
 
   this.isTouchingGround = true;
@@ -30,18 +30,19 @@ function Avatar(gl) {
     this.gameObject.accel.set(0, -0.8, 0);
 
     if(this.isTouchingGround) {
-      this.gameObject.velocity.y *= -1;
+      this.gameObject.velocity.y = 0;
       this.gameObject.accel.set(0, 0, 0);
-    }
-    
-    if(keysPressed.W) this.gameObject.accel.add(0, 0, 1);
-    if(keysPressed.S) this.gameObject.accel.sub(0, 0, 1);    
-    if(keysPressed.A) this.gameObject.accel.add(0.8, 0, 0);
-    if(keysPressed.D) this.gameObject.accel.sub(0.8, 0, 0);
 
-    if(keysPressed.SPACE && this.gameObject.position.y <= 4) {
-      this.gameObject.velocity.y = 80;
-    };
+      if(keysPressed.W) this.gameObject.accel.add(0, 0, 1);
+      if(keysPressed.S) this.gameObject.accel.sub(0, 0, 1);    
+      if(keysPressed.A) this.gameObject.accel.add(0.8, 0, 0);
+      if(keysPressed.D) this.gameObject.accel.sub(0.8, 0, 0);
+  
+      if(keysPressed.SPACE) {
+        this.gameObject.position.y += 1;
+        this.gameObject.velocity.y = 80;
+      };
+    }
 
     this.gameObject.accel.mul(190);
     if(keysPressed.P) console.log(this.gameObject.velocity.storage, this.gameObject.position.storage);
@@ -77,7 +78,7 @@ Avatar.prototype.computeGroundTouches = function(gameObjects) {
       // z coordinate is within platform's computed z boundaries AND
       (z >= minz && z <= maxz) &&
       // y coordinate is within (0, 14) of platform's computed y position
-      (y >= platformY - 7 && y <= platformY + 7)
+      (y >= platformY - 7 && y <= platformY - 3.5)
     ) {return true;}
   }
   return false;
@@ -86,3 +87,9 @@ Avatar.prototype.computeGroundTouches = function(gameObjects) {
 Avatar.prototype.draw = function(camera) {
   this.gameObject.draw(camera);
 };
+
+Avatar.prototype.reset = function() {
+  this.gameObject.position.set(0, 30, 0);
+  this.gameObject.accel = new Vec3();
+  this.gameObject.velocity = new Vec3().set(0, 0, 0);
+}

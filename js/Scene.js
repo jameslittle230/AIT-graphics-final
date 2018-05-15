@@ -1,5 +1,6 @@
 "use strict";
 const Scene = function(gl) {
+  this.gl = gl;
   gl.enable(gl.DEPTH_TEST);
 
   this.skyCubeTexture = new TextureCube(gl, [
@@ -27,9 +28,11 @@ const Scene = function(gl) {
 
   this.gameObjects = [
     this.avatar,
-    new Platform(gl, 0, 0, 0),
+    new Platform(gl, -50, 0, 50),
+    new Platform(gl, -190, 0, 50),
   ];
 
+  // this.avatar.gameObject.position.y = 20;
   this.camera = new PerspectiveCamera();
 };
 
@@ -62,8 +65,16 @@ Scene.prototype.update = function(gl, keysPressed) {
     gameObject.draw(this.camera);
   });
 
+  if(this.avatar.gameObject.position.y < -100) {
+    this.resetScene();
+  }
+
   if(this.frameCount == 10) console.log(this.gameObjects[1].getTransformedCoordinates().map((v) => {return v.storage.map((c) => c.toFixed(1)).join(", ")}));
-  if(this.frameCount % 10 == 0) console.log(this.avatar.gameObject.position.storage);
+  if(this.frameCount % 10 == 0) console.log(this.avatar);
 };
+
+Scene.prototype.resetScene = function() {
+  this.avatar.reset();
+}
 
 
