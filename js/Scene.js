@@ -29,11 +29,14 @@ const Scene = function(gl) {
   this.gameObjects = [
     this.avatar,
     new Platform(gl, -50, 0, 50),
-    new Platform(gl, -190, 0, 50),
+    new Platform(gl, -150, 20, 50),
   ];
 
   // this.avatar.gameObject.position.y = 20;
   this.camera = new PerspectiveCamera();
+  this.camera.pitch = 0;
+  this.camera.yaw = Math.PI;
+  this.camera.position.set(this.avatar.gameObject.position.minus(0, -30, 80));
 };
 
 Scene.prototype.update = function(gl, keysPressed) {
@@ -51,17 +54,13 @@ Scene.prototype.update = function(gl, keysPressed) {
   Material.rayDirMatrix.set(this.camera.rayDirMatrix);
 
   this.avatar.control(timeAtThisFrame, dt, keysPressed, this.gameObjects);
-  // this.avatar.gameObject.position.add(10, 0, 10);
 
-  this.camera.pitch = 0;
-  this.camera.yaw = Math.PI;
-  this.camera.position.set(this.avatar.gameObject.position.minus(0, -30, 80));
   this.camera.move(dt, keysPressed);
 
   this.background.draw(this.camera);
   
   this.gameObjects.forEach(gameObject => {
-    gameObject.move(timeAtThisFrame, dt);
+    gameObject.move(timeAtThisFrame, dt, this.avatar);
     gameObject.draw(this.camera);
   });
 
@@ -69,8 +68,8 @@ Scene.prototype.update = function(gl, keysPressed) {
     this.resetScene();
   }
 
-  if(this.frameCount == 10) console.log(this.gameObjects[1].getTransformedCoordinates().map((v) => {return v.storage.map((c) => c.toFixed(1)).join(", ")}));
-  if(this.frameCount % 10 == 0) console.log(this.avatar);
+  // if(this.frameCount == 10) console.log(this.gameObjects[1].getTransformedCoordinates().map((v) => {return v.storage.map((c) => c.toFixed(1)).join(", ")}));
+  // if(this.frameCount % 10 == 0) console.log(this.avatar);
 };
 
 Scene.prototype.resetScene = function() {

@@ -21,8 +21,12 @@ function Avatar(gl) {
     this.gameObject.velocity.addScaled(dt, this.gameObject.accel);
     if(this.isTouchingGround) this.gameObject.velocity.mul(0.96, 1, 0.96);
     this.gameObject.position.addScaled(dt, this.gameObject.velocity);
-    this.gameObject.pitch += this.gameObject.velocity.z * 0.0035;
-    this.gameObject.roll -= this.gameObject.velocity.x * 0.0035;
+
+    let vel = this.gameObject.velocity;
+
+    var rotationAxis = new Vec3(vel.z, 0, -1 * vel.x);
+    var rotationSpeed = Math.sqrt(vel.x*vel.x+vel.z*vel.z);
+    this.gameObject.rotationMatrix.rotate(dt * 0.3 * rotationSpeed, rotationAxis);
   };
 
   this.control = function(t, dt, keysPressed, gameObjects) {
@@ -32,16 +36,16 @@ function Avatar(gl) {
     if(this.isTouchingGround) {
       this.gameObject.velocity.y = 0;
       this.gameObject.accel.set(0, 0, 0);
-
-      if(keysPressed.W) this.gameObject.accel.add(0, 0, 1);
-      if(keysPressed.S) this.gameObject.accel.sub(0, 0, 1);    
-      if(keysPressed.A) this.gameObject.accel.add(0.8, 0, 0);
-      if(keysPressed.D) this.gameObject.accel.sub(0.8, 0, 0);
   
       if(keysPressed.SPACE) {
         this.gameObject.position.y += 1;
         this.gameObject.velocity.y = 80;
       };
+
+      if(keysPressed.W) this.gameObject.accel.add(0, 0, 1);
+      if(keysPressed.S) this.gameObject.accel.sub(0, 0, 1);    
+      if(keysPressed.A) this.gameObject.accel.add(0.8, 0, 0);
+      if(keysPressed.D) this.gameObject.accel.sub(0.8, 0, 0);
     }
 
     this.gameObject.accel.mul(190);

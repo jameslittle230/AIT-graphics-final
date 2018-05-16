@@ -3,9 +3,7 @@ const GameObject = function(mesh) {
   this.mesh = mesh;
 
   this.position = new Vec3(0, 0, 0);
-  this.pitch = 0;
-  this.roll = 0;
-  this.yaw = 0;
+  this.rotationMatrix = new Mat4().set();
   this.scale = new Vec3(1, 1, 1);
 
   this.modelMatrix = new Mat4();
@@ -46,9 +44,7 @@ GameObject.prototype.updateModelMatrix = function() {
   this.modelMatrix
     .set()
     .scale(this.scale)
-    .rotate(this.roll, 0, 0, 1)
-    .rotate(this.pitch, 1, 0, 0)
-    .rotate(this.yaw, 0, 1, 0)
+    .mul(this.rotationMatrix)
     .translate(this.position);
 
   if (this.parent != null) {
