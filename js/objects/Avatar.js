@@ -16,10 +16,19 @@ function Avatar(gl) {
   this.gameObject.scale.set(7, 7, 7);
 
   this.isTouchingGround = true;
+  this.onEndPlatform = 0;
 
   this.move = function(t, dt) {
     this.gameObject.velocity.addScaled(dt, this.gameObject.accel);
-    if(this.isTouchingGround) this.gameObject.velocity.mul(0.96, 1, 0.96);
+
+    if(this.isTouchingGround) {
+      this.gameObject.velocity.mul(0.96, 1, 0.96);
+    }
+
+    if(!this.isTouchingGround) {
+      this.gameObject.velocity.mul(1, 1, 1);
+    }
+
     this.gameObject.position.addScaled(dt, this.gameObject.velocity);
 
     let vel = this.gameObject.velocity;
@@ -31,6 +40,7 @@ function Avatar(gl) {
 
   this.control = function(t, dt, keysPressed, gameObjects, cam) {
     this.isTouchingGround = this.computeGroundTouches(gameObjects);
+    // if(this.isTouchingGround) console.log("Touching the ground")
     this.gameObject.accel.set(0, -0.8, 0);
 
     if(this.isTouchingGround) {
@@ -41,12 +51,12 @@ function Avatar(gl) {
         this.gameObject.position.y += 1;
         this.gameObject.velocity.y = 80;
       };
-
-      if(keysPressed.W) this.gameObject.accel.add(cam.ahead.x, 0, cam.ahead.z);
-      if(keysPressed.S) this.gameObject.accel.sub(cam.ahead.x, 0, cam.ahead.z);    
-      if(keysPressed.A) this.gameObject.accel.sub(cam.right.x, 0, cam.right.z);
-      if(keysPressed.D) this.gameObject.accel.add(cam.right.x, 0, cam.right.z);
     }
+
+    if(keysPressed.W) this.gameObject.accel.add(new Vec3(cam.ahead.x, 0, cam.ahead.z).normalize());
+    if(keysPressed.S) this.gameObject.accel.sub(new Vec3(cam.ahead.x, 0, cam.ahead.z).normalize());    
+    if(keysPressed.A) this.gameObject.accel.sub(new Vec3(cam.right.x, 0, cam.right.z).normalize());
+    if(keysPressed.D) this.gameObject.accel.add(new Vec3(cam.right.x, 0, cam.right.z).normalize());
 
     this.gameObject.accel.mul(190);
     if(keysPressed.P) console.log(this.gameObject.velocity.storage, this.gameObject.position.storage);
@@ -64,26 +74,26 @@ Avatar.prototype.computeGroundTouches = function(gameObjects) {
   for(var i=0; i<gameObjects.length; i++) {
     var platform = gameObjects[i];
     if(!(platform instanceof Platform)) continue;
-    const coords = platform.getTransformedCoordinates();
-
-    const minx = Math.min(...coords.map((v) => {return v.x}));
-    const maxx = Math.max(...coords.map((v) => {return v.x}));
-    const minz = Math.min(...coords.map((v) => {return v.z}));
-    const maxz = Math.max(...coords.map((v) => {return v.z}));
-    const platformY = coords[0].y; // assuming all y will be the same
-
-    const x = this.gameObject.position.x;
-    const y = this.gameObject.position.y;
-    const z = this.gameObject.position.z;
+    gameObjects[i].gameObject.updateModelMatrix();
+    const coords = this.gameObject.position.xyz1times(gameObjects[i].gameObject.modelMatrix.invert());
+    // console.log(gameObjects[i].gameObject.position.storage);
+    // gameObjects[i].gameObject.modelMatrix.p;
+    // console.log(coords);
+    // debugger;
     
     if(
       // x coordinate is within platform's computed x boundaries AND
-      (x >= minx && x <= maxx) &&
+      (coords.x >= 0 && coords.x <= 100) &&
       // z coordinate is within platform's computed z boundaries AND
-      (z >= minz && z <= maxz) &&
+      (coords.z >= -100 && coords.z <= 0) &&
       // y coordinate is within (0, 14) of platform's computed y position
-      (y >= platformY - 7 && y <= platformY - 3.5)
-    ) {return true;}
+      (coords.y >= 0 && coords.y <= 10)
+    ) {
+      if(platform.variant == "end") {
+        this.onEndPlatform++;
+      }
+      return true;
+    }
   }
   return false;
 }
@@ -93,7 +103,8 @@ Avatar.prototype.draw = function(camera) {
 };
 
 Avatar.prototype.reset = function() {
-  this.gameObject.position.set(0, 30, 0);
+  this.onEndPlatform = 0;
   this.gameObject.accel = new Vec3();
   this.gameObject.velocity = new Vec3().set(0, 0, 0);
+  this.gameObject.position.set(0, 30, 0);
 }

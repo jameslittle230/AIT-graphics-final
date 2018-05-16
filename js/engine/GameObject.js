@@ -18,28 +18,6 @@ const GameObject = function(mesh) {
   this.jumpBuffer = 0;
 };
 
-Object.defineProperty(GameObject.prototype, "ahead", {
-  get: function() {
-    var rotationMatrix = new Mat4()
-      .rotate(this.roll, 0, 0, 1)
-      .rotate(this.pitch, 1, 0, 0)
-      .rotate(this.yaw, 0, 1, 0);
-
-    return new Vec3(0, 0, 1).xyz1times(rotationMatrix);
-  }
-});
-
-Object.defineProperty(GameObject.prototype, "right", {
-  get: function() {
-    var rotationMatrix = new Mat4()
-      .rotate(this.pitch, 1, 0, 0)
-      .rotate(this.roll, 0, 0, 1)
-      .rotate(this.yaw, 0, 1, 0);
-
-    return new Vec3(1, 0, 0).xyz1times(rotationMatrix);
-  }
-});
-
 GameObject.prototype.updateModelMatrix = function() {
   this.modelMatrix
     .set()

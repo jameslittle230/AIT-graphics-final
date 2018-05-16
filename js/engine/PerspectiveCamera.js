@@ -1,6 +1,6 @@
 "use strict";
 const PerspectiveCamera = function() {
-  this.avatarOffset = new Vec3(0, 20, -60)
+  this.avatarOffset = new Vec3(0, 30, -70)
   this.position = new Vec3(0, 0, 0);
   this.originalPosition = new Vec3();
   this.ahead = new Vec3(0.0, 0.0, 1.0);
@@ -8,7 +8,7 @@ const PerspectiveCamera = function() {
   this.up = new Vec3(0.0, 1.0, 0.0);
 
   this.yaw = 0;
-  this.pitch = -0;
+  this.pitch = -1;
 
   this.fov = 1.2;
   this.aspect = 1.0;
@@ -104,23 +104,25 @@ PerspectiveCamera.prototype.updateProjMatrix = function() {
 
 PerspectiveCamera.prototype.move = function(dt, keysPressed, avatar) {
   if(keysPressed.UP) {
-    this.avatarOffset.addScaled(dt*31.4159, this.up);
-    this.pitch -= 0.01;
+    this.avatarOffset.addScaled(dt*-36 * 2, this.up);
+    this.pitch += 0.01 * 2;
   }
 
   if(keysPressed.DOWN) {
-    this.avatarOffset.addScaled(dt*-31.4159, this.up);
-    this.pitch += 0.01;
+    this.avatarOffset.addScaled(dt*36 * 2, this.up);
+    this.pitch -= 0.01 * 2;
+    // console.log(this.pitch);
+    if(this.pitch < Math.PI / -2) this.pitch += Math.PI;
   }
 
   if(keysPressed.LEFT) {
-    this.avatarOffset.addScaled(dt*31.4159, this.right);
-    this.yaw += 0.01;
+    this.avatarOffset.addScaled(dt*36 * 2, this.right);
+    this.yaw += 0.01 * 2;
   }
 
   if(keysPressed.RIGHT) {
-    this.avatarOffset.addScaled(dt*-31.4159, this.right);
-    this.yaw -= 0.01;
+    this.avatarOffset.addScaled(dt*-36 * 2, this.right);
+    this.yaw -= 0.01 * 2;
   }
 
   this.position = avatar.gameObject.position;
@@ -149,3 +151,9 @@ PerspectiveCamera.prototype.setAspectRatio = function(ar) {
   this.aspect = ar;
   this.updateProjMatrix();
 };
+
+PerspectiveCamera.prototype.reset = function() {
+  this.pitch = 0;
+  this.yaw = Math.PI;
+  this.avatarOffset.set(0, 30, -70);
+}

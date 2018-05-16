@@ -4,6 +4,10 @@
 }
 
 #container {
+	font-family: "Cherry Cream Soda";
+	font-size: 3rem;
+	color: yellow;
+	text-shadow: 5px 5px 0 red;
     position: absolute;
 	width: 100%;
 	height: 100%;
@@ -14,10 +18,18 @@
     overflow: hidden;
 }
 
-#overlay {
+#levelOverlay {
     position: absolute;
     left: 10px;
     top: 10px;
+    z-index: 20;
+}
+
+#timerOverlay {
+    position: absolute;
+    left: 50%;
+	top: 10px;
+	transform: translateX(-50%);
     z-index: 20;
 }
 

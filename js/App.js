@@ -1,8 +1,7 @@
 "use strict";
 // App constructor
-const App = function(canvas, overlay) {
+const App = function(canvas) {
 	this.canvas = canvas;
-	this.overlay = overlay;
 	this.keysPressed = [];
 
 	// if no GL support, cry
@@ -70,9 +69,6 @@ App.prototype.update = function() {
 	if (pendingResourceNames.length === 0) {
 		// animate and draw scene
 		this.scene.update(this.gl, this.keysPressed);
-		this.overlay.innerHTML = "Ready.";
-	} else {
-		this.overlay.innerHTML = "Loading: " + pendingResourceNames;
 	}
 
 	// refresh
@@ -85,9 +81,6 @@ App.prototype.update = function() {
 // entry point from HTML
 window.addEventListener('load', function() {
 	const canvas = document.getElementById("canvas");
-	const overlay = document.getElementById("overlay");
-	overlay.innerHTML = "WebGL";
-
-	const app = new App(canvas, overlay);
+	const app = new App(canvas);
 	app.registerEventHandlers();
 });
