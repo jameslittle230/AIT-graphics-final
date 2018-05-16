@@ -55,12 +55,12 @@ Scene.prototype.update = function(gl, keysPressed) {
 
   this.avatar.control(timeAtThisFrame, dt, keysPressed, this.gameObjects);
 
-  this.camera.move(dt, keysPressed);
+  this.camera.move(dt, keysPressed, this.avatar);
 
   this.background.draw(this.camera);
   
   this.gameObjects.forEach(gameObject => {
-    gameObject.move(timeAtThisFrame, dt, this.avatar);
+    gameObject.move(timeAtThisFrame, dt);
     gameObject.draw(this.camera);
   });
 
@@ -69,7 +69,7 @@ Scene.prototype.update = function(gl, keysPressed) {
   }
 
   // if(this.frameCount == 10) console.log(this.gameObjects[1].getTransformedCoordinates().map((v) => {return v.storage.map((c) => c.toFixed(1)).join(", ")}));
-  // if(this.frameCount % 10 == 0) console.log(this.avatar);
+  if(this.frameCount % 10 == 0) console.log(this.camera.avatarOffset.storage, this.avatar.gameObject.position.storage);
 };
 
 Scene.prototype.resetScene = function() {

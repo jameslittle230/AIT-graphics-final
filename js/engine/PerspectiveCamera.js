@@ -1,6 +1,7 @@
 "use strict";
 const PerspectiveCamera = function() {
-  this.position = new Vec3(0.0, 10.0, -10.0);
+  this.avatarOffset = new Vec3(0, 20, -60)
+  this.position = new Vec3(0, 0, 0);
   this.originalPosition = new Vec3();
   this.ahead = new Vec3(0.0, 0.0, 1.0);
   this.right = new Vec3(1.0, 0.0, 0.0);
@@ -30,6 +31,7 @@ PerspectiveCamera.prototype.updateRayDirMatrix = function() {
   this.rayDirMatrix
     .set()
     .translate(this.position)
+    .translate(this.avatarOffset)
     .mul(this.viewMatrix)
     .mul(this.projMatrix)
     .invert();
@@ -56,6 +58,7 @@ PerspectiveCamera.prototype.updateViewMatrix = function() {
       1
     )
     .translate(this.position)
+    .translate(this.avatarOffset)
     .invert();
 
   this.viewProjMatrix.set(this.viewMatrix).mul(this.projMatrix);
@@ -97,11 +100,25 @@ PerspectiveCamera.prototype.updateProjMatrix = function() {
   this.viewProjMatrix.set(this.viewMatrix).mul(this.projMatrix);
 };
 
-PerspectiveCamera.prototype.move = function(dt, keysPressed) {
-  if(keysPressed.UP) this.position.y += dt*10;
-  if(keysPressed.DOWN) this.position.y -= dt*10;
-  if(keysPressed.LEFT) this.position.addScaled(dt*-15, this.right);
-  if(keysPressed.RIGHT) this.position.addScaled(dt*15, this.right);
+PerspectiveCamera.prototype.move = function(dt, keysPressed, avatar) {
+  if(keysPressed.UP) {
+    this.avatarOffset.y += dt*10;
+  }
+
+  if(keysPressed.DOWN) {
+    this.avatarOffset.y -= dt*10;
+  }
+
+  if(keysPressed.LEFT) {
+    this.avatarOffset.addScaled(dt*-15, this.right);
+  }
+
+  if(keysPressed.RIGHT) {
+    this.avatarOffset.addScaled(dt*15, this.right);
+  }
+
+  this.position = avatar.gameObject.position;
+  
   this.updateViewMatrix();
   this.updateProjMatrix();
   this.updateRayDirMatrix();
