@@ -53,9 +53,8 @@ Scene.prototype.update = function(gl, keysPressed) {
   Material.eyePos.set(this.camera.position);
   Material.rayDirMatrix.set(this.camera.rayDirMatrix);
 
-  this.avatar.control(timeAtThisFrame, dt, keysPressed, this.gameObjects);
-
   this.camera.move(dt, keysPressed, this.avatar);
+  this.avatar.control(timeAtThisFrame, dt, keysPressed, this.gameObjects, this.camera);
 
   this.background.draw(this.camera);
   

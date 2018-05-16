@@ -9,8 +9,10 @@ const PerspectiveCamera = function() {
 
   this.yaw = 0;
   this.pitch = -0;
+
   this.fov = 1.2;
   this.aspect = 1.0;
+
   this.nearPlane = 0.1;
   this.farPlane = 1000.0;
 
@@ -102,19 +104,23 @@ PerspectiveCamera.prototype.updateProjMatrix = function() {
 
 PerspectiveCamera.prototype.move = function(dt, keysPressed, avatar) {
   if(keysPressed.UP) {
-    this.avatarOffset.y += dt*10;
+    this.avatarOffset.addScaled(dt*31.4159, this.up);
+    this.pitch -= 0.01;
   }
 
   if(keysPressed.DOWN) {
-    this.avatarOffset.y -= dt*10;
+    this.avatarOffset.addScaled(dt*-31.4159, this.up);
+    this.pitch += 0.01;
   }
 
   if(keysPressed.LEFT) {
-    this.avatarOffset.addScaled(dt*-15, this.right);
+    this.avatarOffset.addScaled(dt*31.4159, this.right);
+    this.yaw += 0.01;
   }
 
   if(keysPressed.RIGHT) {
-    this.avatarOffset.addScaled(dt*15, this.right);
+    this.avatarOffset.addScaled(dt*-31.4159, this.right);
+    this.yaw -= 0.01;
   }
 
   this.position = avatar.gameObject.position;

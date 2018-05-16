@@ -29,7 +29,7 @@ function Avatar(gl) {
     this.gameObject.rotationMatrix.rotate(dt * 0.3 * rotationSpeed, rotationAxis);
   };
 
-  this.control = function(t, dt, keysPressed, gameObjects) {
+  this.control = function(t, dt, keysPressed, gameObjects, cam) {
     this.isTouchingGround = this.computeGroundTouches(gameObjects);
     this.gameObject.accel.set(0, -0.8, 0);
 
@@ -42,10 +42,10 @@ function Avatar(gl) {
         this.gameObject.velocity.y = 80;
       };
 
-      if(keysPressed.W) this.gameObject.accel.add(0, 0, 1);
-      if(keysPressed.S) this.gameObject.accel.sub(0, 0, 1);    
-      if(keysPressed.A) this.gameObject.accel.add(0.8, 0, 0);
-      if(keysPressed.D) this.gameObject.accel.sub(0.8, 0, 0);
+      if(keysPressed.W) this.gameObject.accel.add(cam.ahead.x, 0, cam.ahead.z);
+      if(keysPressed.S) this.gameObject.accel.sub(cam.ahead.x, 0, cam.ahead.z);    
+      if(keysPressed.A) this.gameObject.accel.sub(cam.right.x, 0, cam.right.z);
+      if(keysPressed.D) this.gameObject.accel.add(cam.right.x, 0, cam.right.z);
     }
 
     this.gameObject.accel.mul(190);
