@@ -30,6 +30,21 @@ Platform.prototype.scale = function(x, y, z) {
     return this;
 }
 
+Platform.prototype.rotate = function(y, p, r) {
+    r = r / 360 * Math.PI * 2;
+    this.gameObject.rotationMatrix.set().rotate(r, 0, 0, 1)
+        .rotate(p, 1, 0, 0)
+        .rotate(y, 0, 1, 0);
+    return this;
+}
+
+Platform.prototype.normal = function() {
+    console.log(this.gameObject.rotationMatrix);
+    var thing = new Vec3(0, 1, 0).xyz1mul(this.gameObject.rotationMatrix);
+    console.log(thing);
+    return thing;
+}
+
 Platform.prototype.draw = function(camera) {
     this.gameObject.draw(camera);
 }

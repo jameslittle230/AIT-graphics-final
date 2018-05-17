@@ -38,10 +38,16 @@ const Scene = function(gl) {
     ],
     [
       new Platform(gl, -25, 0, 25, "start").scale(0.5, 1, 0.5),
+      new Platform(gl, -50, 0, 50).scale(0.5, 1, 3).rotate(45, 45, 0),
+      new Platform(gl, -160, 160, 120).scale(0.6, 1, 1),
+      new Platform(gl, -220, 180, 240, "end")
+    ],
+    [
+      new Platform(gl, -25, 0, 25, "start").scale(0.5, 1, 0.5),
     ]
   ]
 
-  this.currentLevel = 0;
+  this.currentLevel = 1;
   this.timer = 0;
 
   // this.avatar.gameObject.position.y = 20;

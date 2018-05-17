@@ -39,12 +39,15 @@ function Avatar(gl) {
   };
 
   this.control = function(t, dt, keysPressed, gameObjects, cam) {
-    this.isTouchingGround = this.computeGroundTouches(gameObjects);
+    var groundTouches = this.computeGroundTouches(gameObjects);
+    this.isTouchingGround = groundTouches != false;
     // if(this.isTouchingGround) console.log("Touching the ground")
     this.gameObject.accel.set(0, -0.8, 0);
 
     if(this.isTouchingGround) {
-      this.gameObject.velocity.y = 0;
+      this.gameObject.position.y += groundTouches.ydiff;
+      this.gameObject.velocity.add(gameObjects[groundTouches.index].normal().times(2));
+      // if(this.gameObject.velocity.y < -1) this.gameObject.velocity.y *= -0.8;
       this.gameObject.accel.set(0, 0, 0);
   
       if(keysPressed.SPACE) {
@@ -92,7 +95,10 @@ Avatar.prototype.computeGroundTouches = function(gameObjects) {
       if(platform.variant == "end") {
         this.onEndPlatform++;
       }
-      return true;
+      return {
+        ydiff: 10 - coords.y,
+        index: i
+      }
     }
   }
   return false;
