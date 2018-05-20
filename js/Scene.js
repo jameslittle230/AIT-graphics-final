@@ -107,6 +107,11 @@ Scene.prototype.update = function(gl, keysPressed) {
     go.draw(this.camera);
   })
 
+  if(this.currentLevel == 3) {
+    alert("you win!");
+    this.resetScene();
+  }
+
   if(keysPressed.P) {
     console.log(this.avatar.gameObject.position.storage);
   }
@@ -117,6 +122,7 @@ Scene.prototype.update = function(gl, keysPressed) {
   } else {
     document.getElementById("gemOverlay").innerHTML = "";
   }
+
   if(this.avatar.onEndPlatform > 30 && this.avatar.gemsTouched == numberOfGemsInCurrentLevel) {
     if(!localStorage.getItem("highscores") 
     || !(JSON.parse(localStorage.getItem("highscores"))[this.currentLevel])
