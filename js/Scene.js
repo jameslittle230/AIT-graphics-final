@@ -44,10 +44,21 @@ const Scene = function(gl) {
     ],
     [
       new Platform(gl, -25, 0, 25, "start").scale(0.5, 1, 0.5),
+      new Platform(gl, -400, 0, 50).scale(3, 1, 2).rotate(20, 5, 0),
+      new Gem(gl, -20, 4, 20),
+      new Gem(gl, -154, 15, -66),
+      new Gem(gl, -184, 25, -159),
+      new Gem(gl, -348, 25, -130),
+      new Gem(gl, -277, 20, -79),
+      new Gem(gl, -391, 15, 25),
+      new Platform(gl, 25, 0, 25, "end").scale(0.5, 1, 0.5)
+    ],
+    [
+      new Platform(gl, -25, 0, 25, "start").scale(0.5, 1, 0.5),
     ]
   ]
 
-  this.currentLevel = 1;
+  this.currentLevel = 0;
   this.timer = 0;
 
   // this.avatar.gameObject.position.y = 20;
@@ -63,10 +74,16 @@ Scene.prototype.update = function(gl, keysPressed) {
   this.frameCount++;
   this.timer += dt;
 
-  console.log(this.timer);
+  // console.log(this.timer);
 
   document.getElementById("levelOverlay").innerHTML = "Level " + (this.currentLevel + 1);
   document.getElementById("timerOverlay").innerHTML = "" + this.timer.toFixed(2);
+  // console.log(JSON.parse(localStorage.getItem("highscores")));
+  if(localStorage.getItem("highscores") && JSON.parse(localStorage.getItem("highscores"))[this.currentLevel]) {
+    document.getElementById("bestOverlay").innerHTML = " (Best: " + JSON.parse(localStorage.getItem("highscores"))[this.currentLevel].toFixed(2) + ")";
+  } else {
+    document.getElementById("bestOverlay").innerHTML = "";
+  }
 
 // Clear screen
   gl.clearColor(1, 1, 1, 1);
@@ -90,7 +107,26 @@ Scene.prototype.update = function(gl, keysPressed) {
     go.draw(this.camera);
   })
 
-  if(this.avatar.onEndPlatform > 10) {
+  if(keysPressed.P) {
+    console.log(this.avatar.gameObject.position.storage);
+  }
+
+  var numberOfGemsInCurrentLevel = this.levels[this.currentLevel].filter(go => go instanceof Gem).length;
+  if(numberOfGemsInCurrentLevel > 0) {
+    document.getElementById("gemOverlay").innerHTML = this.avatar.gemsTouched + "/" + numberOfGemsInCurrentLevel + " gems touched";
+  } else {
+    document.getElementById("gemOverlay").innerHTML = "";
+  }
+  if(this.avatar.onEndPlatform > 30 && this.avatar.gemsTouched == numberOfGemsInCurrentLevel) {
+    if(!localStorage.getItem("highscores") 
+    || !(JSON.parse(localStorage.getItem("highscores"))[this.currentLevel])
+    || (JSON.parse(localStorage.getItem("highscores"))[this.currentLevel] 
+    && JSON.parse(localStorage.getItem("highscores"))[this.currentLevel] > this.timer)) {
+      var temp = JSON.parse(localStorage.getItem("highscores") || "{}");
+      console.log(temp);
+      temp[this.currentLevel] = this.timer;
+      localStorage.setItem("highscores", JSON.stringify(temp));
+    }
     this.currentLevel++;
     this.resetScene();
   }
@@ -105,6 +141,11 @@ Scene.prototype.update = function(gl, keysPressed) {
 
 Scene.prototype.resetScene = function() {
   this.timer = 0;
+  this.levels[this.currentLevel].map(go => {
+    if(!go instanceof Gem) return go;
+    go.touched = false;
+    return go;
+  });
   this.avatar.reset();
   this.camera.reset();
 }

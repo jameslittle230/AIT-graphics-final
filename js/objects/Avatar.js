@@ -17,6 +17,7 @@ function Avatar(gl) {
 
   this.isTouchingGround = true;
   this.onEndPlatform = 0;
+  this.gemsTouched = 0;
 
   this.move = function(t, dt) {
     this.gameObject.velocity.addScaled(dt, this.gameObject.accel);
@@ -40,6 +41,7 @@ function Avatar(gl) {
 
   this.control = function(t, dt, keysPressed, gameObjects, cam) {
     var groundTouches = this.computeGroundTouches(gameObjects);
+    this.processGemTouches(gameObjects);
     this.isTouchingGround = groundTouches != false;
     // if(this.isTouchingGround) console.log("Touching the ground")
     this.gameObject.accel.set(0, -0.8, 0);
@@ -62,7 +64,6 @@ function Avatar(gl) {
     if(keysPressed.D) this.gameObject.accel.add(new Vec3(cam.right.x, 0, cam.right.z).normalize());
 
     this.gameObject.accel.mul(190);
-    if(keysPressed.P) console.log(this.gameObject.velocity.storage, this.gameObject.position.storage);
   }; 
 }
 
@@ -73,16 +74,11 @@ Number.prototype.between = function(a, b) {
 };
 
 Avatar.prototype.computeGroundTouches = function(gameObjects) {
-  // return true;
   for(var i=0; i<gameObjects.length; i++) {
     var platform = gameObjects[i];
     if(!(platform instanceof Platform)) continue;
     gameObjects[i].gameObject.updateModelMatrix();
     const coords = this.gameObject.position.xyz1times(gameObjects[i].gameObject.modelMatrix.invert());
-    // console.log(gameObjects[i].gameObject.position.storage);
-    // gameObjects[i].gameObject.modelMatrix.p;
-    // console.log(coords);
-    // debugger;
     
     if(
       // x coordinate is within platform's computed x boundaries AND
@@ -104,12 +100,27 @@ Avatar.prototype.computeGroundTouches = function(gameObjects) {
   return false;
 }
 
+Avatar.prototype.processGemTouches = function(gameObjects) {
+  for(var i=0; i<gameObjects.length; i++) {
+    var gem = gameObjects[i];
+    if(!(gem instanceof Gem)) continue;
+    if(gem.touched) continue;
+    var dist = this.gameObject.position.minus(gem.gameObject.position.plus(gem.modelOffset)).length();
+    if(dist < 10) {
+      console.log("got a gem");
+      gem.touched = true;
+      this.gemsTouched++;
+    }
+  }
+}
+
 Avatar.prototype.draw = function(camera) {
   this.gameObject.draw(camera);
 };
 
 Avatar.prototype.reset = function() {
   this.onEndPlatform = 0;
+  this.gemsTouched = 0;
   this.gameObject.accel = new Vec3();
   this.gameObject.velocity = new Vec3().set(0, 0, 0);
   this.gameObject.position.set(0, 30, 0);
